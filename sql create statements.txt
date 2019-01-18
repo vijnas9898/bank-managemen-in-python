@@ -1,0 +1,97 @@
+CREATE TABLE `accounts` (
+  `accountid` varchar(45) NOT NULL,
+  `balance` int(11) DEFAULT '0',
+  `acctype` varchar(45) NOT NULL,
+  `amt` varchar(45) DEFAULT NULL,
+  `ifsccode` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`accountid`),
+  KEY `ifsccode_idx` (`ifsccode`),
+  CONSTRAINT `ifsccode` FOREIGN KEY (`ifsccode`) REFERENCES `branch` (`ifsccode`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `borrower` (
+  `loanid` varchar(45) NOT NULL,
+  `accountid` varchar(45) DEFAULT NULL,
+  `borrowname` varchar(45) DEFAULT NULL,
+  `occupation` varchar(45) DEFAULT NULL,
+  `loantype` varchar(45) NOT NULL,
+  `panno` varchar(45) DEFAULT NULL,
+  `uidno` varchar(45) DEFAULT NULL,
+  `nominee` varchar(45) DEFAULT NULL,
+  `docs` varchar(45) DEFAULT NULL,
+  `branchid` varchar(45) DEFAULT NULL,
+  `loanamt` int(11) DEFAULT NULL,
+  PRIMARY KEY (`loanid`),
+  UNIQUE KEY `loantype_UNIQUE` (`loantype`),
+  KEY `accid_idx` (`accountid`),
+  KEY `branid_idx` (`branchid`),
+  CONSTRAINT `accid` FOREIGN KEY (`accountid`) REFERENCES `customer` (`accountno`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `branid` FOREIGN KEY (`branchid`) REFERENCES `branch` (`branchid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `branch` (
+  `branchid` varchar(45) NOT NULL,
+  `branchname` varchar(45) DEFAULT NULL,
+  `address` varchar(45) DEFAULT NULL,
+  `ifsccode` varchar(45) NOT NULL,
+  `assets` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`branchid`,`ifsccode`),
+  UNIQUE KEY `ifsccode_UNIQUE` (`ifsccode`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `customer` (
+  `accountno` varchar(45) NOT NULL,
+  `custname` varchar(45) DEFAULT NULL,
+  `age` varchar(45) DEFAULT NULL,
+  `gender` varchar(45) DEFAULT NULL,
+  `panno` varchar(45) DEFAULT NULL,
+  `uidno` varchar(45) DEFAULT NULL,
+  `email` varchar(45) DEFAULT NULL,
+  `phone` varchar(45) DEFAULT NULL,
+  `occupation` varchar(45) DEFAULT NULL,
+  `branchid` varchar(45) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `address` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`accountno`),
+  KEY `branchid_idx` (`branchid`),
+  CONSTRAINT `branchid` FOREIGN KEY (`branchid`) REFERENCES `branch` (`branchid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `employee` (
+  `empid` varchar(45) NOT NULL,
+  `empname` varchar(45) DEFAULT NULL,
+  `age` varchar(45) DEFAULT NULL,
+  `gender` varchar(45) DEFAULT NULL,
+  `address` varchar(45) DEFAULT NULL,
+  `salary` varchar(45) DEFAULT NULL,
+  `uidno` varchar(45) DEFAULT NULL,
+  `dependentsno` varchar(45) DEFAULT NULL,
+  `branchid` varchar(45) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `password` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`empid`),
+  UNIQUE KEY `password_UNIQUE` (`password`),
+  KEY `branchid_idx` (`branchid`),
+  CONSTRAINT `brid` FOREIGN KEY (`branchid`) REFERENCES `branch` (`branchid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `loans` (
+  `loanno` varchar(45) DEFAULT NULL,
+  `accountid` varchar(45) DEFAULT NULL,
+  `loantype` varchar(45) DEFAULT NULL,
+  `interestrates` int(11) DEFAULT NULL,
+  `balance` int(11) DEFAULT NULL,
+  `duration` int(11) DEFAULT NULL,
+  `installments` int(11) DEFAULT NULL,
+  KEY `acid_idx` (`accountid`),
+  KEY `loanno_idx` (`loanno`),
+  CONSTRAINT `acid` FOREIGN KEY (`accountid`) REFERENCES `customer` (`accountno`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `loanno` FOREIGN KEY (`loanno`) REFERENCES `borrower` (`loanid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `log` (
+  `date` datetime NOT NULL,
+  `operation` varchar(45) DEFAULT NULL,
+  `amount` int(11) DEFAULT NULL,
+  `accountid` varchar(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
